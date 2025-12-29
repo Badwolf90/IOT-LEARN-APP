@@ -1,0 +1,190 @@
+
+:root {
+    --primary-dark: #1b2a41;   
+    --primary-teal: #00bfa5;    
+    --teal-hover: #008f7a;      
+    --text-dark: #333333;
+    --text-muted: #8898aa;
+    --bg-light: #f4f7f9;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    height: 100%;
+    background-color: var(--bg-light);
+}
+
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+
+.auth-box {
+    display: flex; 
+    width: 100%;
+    max-width: 900px; 
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    overflow: hidden; 
+    padding: 0; 
+}
+
+
+.auth-left {
+    flex: 1;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #2c3e50 100%);
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-left h2 { font-size: 28px; margin-bottom: 10px; font-weight: 700; }
+.auth-left p { color: #cfd8dc; font-size: 14px; line-height: 1.6; }
+
+
+.auth-left::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+}
+.auth-left::after {
+    content: '';
+    position: absolute;
+    bottom: -50px; left: -50px;
+    width: 150px; height: 150px;
+    background: rgba(0, 191, 165, 0.1);
+    border-radius: 50%;
+}
+
+
+.auth-right {
+    flex: 1.2;
+    padding: 50px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-right h1 {
+    color: var(--primary-dark);
+    font-size: 24px;
+    margin-bottom: 30px;
+    text-align: left; 
+}
+
+
+.form-group { margin-bottom: 20px; }
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s;
+    background: #f9fafb;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-teal);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.1);
+}
+
+/* Main Button */
+button[type="submit"] {
+    background: var(--primary-teal);
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px;
+    border-radius: 6px;
+    transition: background 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+    background: var(--teal-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 191, 165, 0.3);
+}
+
+/* Divider "ATAU" */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 25px 0;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+.divider::before, .divider::after {
+    content: ''; flex: 1; border-bottom: 1px solid #eee;
+}
+.divider span { padding: 0 10px; }
+
+/* Social Buttons */
+.social-btn {
+    width: 100%;
+    border: 1px solid #ddd;
+    background: white;
+    color: #555;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+}
+.social-btn:hover { background: #f4f7f9; border-color: #ccc; }
+.social-btn i { font-size: 16px; }
+
+
+.auth-links { margin-top: 25px; text-align: center; font-size: 13px; color: var(--text-muted); }
+.auth-links a { color: var(--primary-teal); font-weight: 600; text-decoration: none; }
+.auth-links a:hover { text-decoration: underline; }
+
+
+.error-message { color: #e74c3c; background: #fdf0ef; padding: 10px; border-radius: 4px; font-size: 13px; text-align: center; margin-top: 15px; border-left: 3px solid #e74c3c; }
+.success-message { color: #2ecc71; background: #effaf3; padding: 10px; border-radius: 4px; font-size: 13px; text-align: center; margin-top: 15px; border-left: 3px solid #2ecc71; }
+
+
+@media (max-width: 768px) {
+    .auth-box { flex-direction: column; max-width: 400px; }
+    .auth-left { display: none; } 
+    .auth-right { padding: 30px; }
+}

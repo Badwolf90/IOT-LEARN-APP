@@ -1,0 +1,288 @@
+/* =========================================
+   IOT LEARN - ENTERPRISE THEME (KaaIoT Style)
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    /* Color Palette - KaaIoT Inspired */
+    --primary-dark: #1a233a;    /* Dark Navy (Sidebar) */
+    --primary-blue: #2c3e50;    /* Header Text */
+    --accent-teal: #00bfa5;     /* Accent Color (Buttons/Links) */
+    --accent-hover: #009688;    /* Darker Teal for Hover */
+    
+    --bg-body: #f4f7f9;         /* Light Blue-Grey Background */
+    --bg-card: #ffffff;
+    
+    --text-main: #333333;
+    --text-muted: #78909c;
+    --text-light: #ffffff;
+    
+    --border-color: #e0e6ed;
+    --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.1);
+    
+    --success: #2ecc71;
+    --warning: #f1c40f;
+    --danger: #e74c3c;
+}
+
+* { box-sizing: border-box; }
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    height: 100%;
+}
+
+/* === LAYOUT GRID === */
+.app-container {
+    display: grid;
+    grid-template-columns: 260px 1fr; /* Sidebar lebih lebar dikit */
+    grid-template-rows: 64px 1fr;     /* Header fix tinggi */
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* === SIDEBAR (Dark Theme) === */
+.side-bar {
+    grid-column: 1;
+    grid-row: 1 / -1; /* Full height */
+    background-color: var(--primary-dark);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+.brand-logo {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    background-color: rgba(0,0,0,0.2); 
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent-teal);
+    text-decoration: none;
+    text-transform: uppercase;
+}
+.brand-logo i { margin-right: 10px; }
+
+.menu-section {
+    padding: 20px 0;
+}
+
+.menu-section h3 {
+    padding: 0 25px;
+    margin-bottom: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #5d6d7e; 
+    letter-spacing: 1.2px;
+    font-weight: 600;
+}
+
+.side-bar a {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px;
+    color: #aeb6bf;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.side-bar a i { 
+    width: 20px; 
+    margin-right: 15px; 
+    text-align: center;
+}
+
+.side-bar a:hover, .side-bar a.active {
+    background-color: rgba(255,255,255,0.05);
+    color: var(--text-light);
+    border-left-color: var(--accent-teal);
+}
+
+/* === TOP BAR === */
+.top-bar {
+    grid-column: 2;
+    grid-row: 1;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 90;
+}
+
+.page-title-crumb {
+    font-size: 18px;
+    color: var(--primary-blue);
+    font-weight: 500;
+}
+
+.user-profile-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.user-info {
+    text-align: right;
+    line-height: 1.2;
+}
+.user-info .name { display: block; font-weight: 600; font-size: 14px; color: var(--primary-dark); }
+.user-info .role { display: block; font-size: 11px; color: var(--text-muted); }
+
+.avatar-circle {
+    width: 36px; height: 36px;
+    background: var(--accent-teal);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.btn-logout {
+    color: var(--text-muted);
+    font-size: 18px;
+    transition: color 0.3s;
+}
+.btn-logout:hover { color: var(--danger); }
+
+/* === MAIN CONTENT === */
+.content-area {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+/* === HERO SECTION === */
+.hero-banner {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #2c3e50 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+.hero-banner h1 { margin: 0 0 10px 0; font-size: 28px; }
+.hero-banner p { margin: 0; color: #cfd8dc; max-width: 600px; }
+.hero-decoration {
+    position: absolute;
+    right: -20px; bottom: -50px;
+    font-size: 180px;
+    opacity: 0.1;
+    color: white;
+    pointer-events: none;
+}
+
+/* === CARDS (Modern Widget Style) - BAGIAN INI YANG DIPERBAIKI === */
+.form-card, .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+/* FIX: Form Card (untuk kotak cari) tingginya 'auto' biar tidak melar */
+.form-card {
+    height: auto; 
+}
+
+/* FIX: Project Card tingginya '100%' biar seragam di grid */
+.project-card {
+    height: 100%;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--accent-teal);
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.project-card h3 a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 18px;
+}
+.project-card h3 a:hover { color: var(--accent-teal); }
+
+.category-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(0, 191, 165, 0.1); /* Teal transparan */
+    color: var(--accent-teal);
+    margin-bottom: 15px;
+    align-self: flex-start;
+}
+
+/* === FORMS & INPUTS === */
+input[type="text"], input[type="email"], input[type="password"], 
+input[type="search"], select, textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: #fdfdfd;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-teal);
+    background: white;
+}
+
+
+.button {
+    display: inline-block;
+    padding: 10px 24px;
+    border-radius: 6px;
+    background-color: var(--accent-teal);
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 191, 165, 0.2);
+}
+.button:hover { background-color: var(--accent-hover); box-shadow: 0 6px 12px rgba(0, 191, 165, 0.3); }
+.button-secondary { background: #e0e6ed; color: #555; box-shadow: none; }
+.button-secondary:hover { background: #d0d7de; }
+
+/* === UTILS === */
+hr { border: 0; border-top: 1px solid var(--border-color); margin: 30px 0; }

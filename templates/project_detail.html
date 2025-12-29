@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{{ proyek.data.nama }}{% endblock %}
+
+{% block content %}
+    <p style="margin-top: 0;"><a href="{{ url_for('project_list') }}">&laquo; Kembali ke Daftar Proyek</a></p>
+    
+    <div class="form-card" style="max-width: none; margin-bottom: 25px;">
+        <h1>{{ proyek.data.nama }}</h1>
+        
+        <p style="margin-top: -15px; margin-bottom: 20px;">
+            <span class="category-tag">{{ proyek.data.kategori | default('Umum') }}</span>
+        </p>
+        
+        <div class="rating-display" style="margin-bottom: 20px;">
+            {% set rating_bulat = avg_rating | round(1) %}
+            {{ '★' * (rating_bulat | int) }}{{ '☆' * (5 - (rating_bulat | int)) }}
+            <span class="text">
+                ({{ rating_bulat }} / 5) berdasarkan {{ num_ratings }} ulasan.
+            </span>
+        </div>
+
+        <p><strong>Ringkasan:</strong> <i>{{ proyek.data.deskripsi_singkat | default('Tidak ada ringkasan.') }}</i></p>
+        
+        {% if is_bookmarked %}
+            <form action="{{ url_for('toggle_bookmark', project_id=proyek.id) }}" method="POST" style="display:inline;">
+                <input type="hidden" name="source_page" value="project_detail">
+                <button type="submit" class="button button-secondary">Hapus Bookmark</button>
+            </form>
+        {% else %}
+            <form action="{{ url_for('toggle_bookmark', project_id=proyek.id) }}" method="POST" style="display:inline;">
+                <input type="hidden" name="source_page" value="project_detail">
+                <button type="submit" class="button button-success">Bookmark Proyek Ini</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="form-card" style="max-width: none; margin-bottom: 25px;">
+        
+        <div class="form-group">
+            <label>Alat dan Bahan:</label>
+            <pre>{{ proyek.data.alat_bahan | default('Tidak ada data.') }}</pre>
+        </div>
+
+        <div class="form-group">
+            <label>Libraries & Software:</label>
+            <pre>{{ proyek.data.libraries | default('Tidak ada data.') }}</pre>
+        </div>
+        
+        <div class="form-group">
+            <label>Source Code:</label>
+            <pre style="max-height: 400px; overflow-y: auto;">{{ proyek.data.source_code | default('Tidak ada source code.') }}</pre>
+        </div>
+        
+        <hr>
+
+        <div class="form-group">
+            <label>Tutorial Lengkap:</label>
+            <pre>{{ proyek.data.tutorial_lengkap | default('Tidak ada tutorial.') }}</pre>
+        </div>
+        
+    </div>
+
+    <div class="form-card" style="max-width: none; margin-bottom: 25px;">
+        <h2>Beri Ulasan Anda</h2>
+        {% if user_rating > 0 %}
+            <p>Anda sudah memberi rating: 
+                <strong class="rating-display" style="font-size: 1.2em;">
+                    {{ '★' * user_rating }}{{ '☆' * (5 - user_rating) }}
+                </strong>
+                <i>(Satu ulasan per pengguna.)</i>
+            </p>
+        {% else %}
+            <form action="{{ url_for('add_rating', project_id=proyek.id) }}" method="POST">
+                <fieldset class="rating-input">
+                    <input type="radio" id="star5" name="rating" value="5" required/><label for="star5" title="Luar Biasa">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="Bagus">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="Cukup">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="Kurang">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="Buruk">★</label>
+                </fieldset>
+                <br>
+                <button type="submit" class="button" style="margin-top: 15px;">Kirim Ulasan</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="form-card" style="max-width: none;">
+        <h2>Komentar</h2>
+        <form action="{{ url_for('add_comment', project_id=proyek.id) }}" method="POST">
+            <div class="form-group">
+                <label for="komentar_teks">Tinggalkan Komentar:</label>
+                <textarea id="komentar_teks" name="komentar_teks" required></textarea>
+            </div>
+            <button type="submit" class="button">Kirim Komentar</button>
+        </form>
+        
+        <hr>
+
+        <h3>Komentar Sebelumnya:</h3>
+        {% for komen in daftar_komentar %}
+            <div class="comment-box">
+                <p class="comment-meta">
+                    <strong>{{ komen.data.user_email }}</strong> 
+                    <span style="font-weight: 400;">
+                        (pada {{ komen.data.timestamp.strftime('%Y-%m-%d %H:%M') if komen.data.timestamp else 'beberapa saat lalu' }})
+                    </span>
+                </p>
+                <p style="white-space: pre-wrap;">{{ komen.data.teks }}</p>
+                
+                {% if is_admin %}
+                    <form action="{{ url_for('delete_comment', project_id=proyek.id, comment_id=komen.id) }}" method="POST" style="margin-top: 10px;">
+                        <button type="submit" onclick="return confirm('Anda yakin ingin menghapus KOMENTAR ini?');" class="button-danger-outline">
+                            Hapus Komentar (Admin)
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>Belum ada komentar untuk proyek ini.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

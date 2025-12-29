@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Tambah Proyek Baru{% endblock %}
+
+{% block content %}
+<div class="form-card" style="max-width: 800px; margin: 0 auto;">
+    <h2 style="color: var(--primary-dark); border-bottom: 1px solid #eee; padding-bottom: 15px;">
+        <i class="fas fa-plus-circle"></i> Tambah Proyek Baru
+    </h2>
+
+    <form action="{{ url_for('add_project_form') }}" method="POST">
+        
+        <div class="form-group">
+            <label>Nama Proyek</label>
+            <input type="text" name="nama_proyek" placeholder="Contoh: Lampu Pintar IoT" required>
+        </div>
+
+        <div class="form-group">
+            <label>Kategori</label>
+            <select name="kategori">
+                <option value="Pemula">Pemula</option>
+                <option value="Sensor">Sensor</option>
+                <option value="Aktuator">Aktuator</option>
+                <option value="IoT Lanjutan">IoT Lanjutan</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Deskripsi Singkat</label>
+            <textarea name="deskripsi_singkat" rows="3" placeholder="Jelaskan proyek ini dalam 1-2 kalimat..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Alat & Bahan</label>
+            <textarea name="alat_bahan" rows="3" placeholder="- Arduino Uno&#10;- Sensor DHT11&#10;- Kabel Jumper"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Tutorial Lengkap (Markdown Support)</label>
+            <textarea name="tutorial_lengkap" rows="6" placeholder="Tulis langkah-langkah pembuatan di sini..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Source Code</label>
+            <textarea name="source_code" rows="6" style="font-family: monospace; background: #2d2d2d; color: #eee;" placeholder="// Tempel kodingan Arduino/Python di sini..."></textarea>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button type="submit" class="button"><i class="fas fa-save"></i> Simpan Proyek</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="button button-secondary">Batal</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Kuis IoT{% endblock %}
+
+{% block content %}
+    <h1>Kuis & Skill Check</h1>
+    <p style="color: #666; margin-bottom: 20px;">Uji pemahaman Anda tentang Internet of Things sebelum memulai proyek.</p>
+
+    <div class="form-card" style="border-top: 4px solid var(--accent-teal);">
+        <form action="{{ url_for('quiz') }}" method="POST">
+            {% for q in questions %}
+                <div style="margin-bottom: 30px;">
+                    <p style="font-weight: bold; font-size: 16px; margin-bottom: 15px;">
+                        <span style="background: var(--primary-dark); color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 10px;">Soal {{ loop.index }}</span>
+                        {{ q.pertanyaan }}
+                    </p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px; padding-left: 10px;">
+                        {% for opsi in q.opsi %}
+                            <label style="cursor: pointer; display: flex; align-items: center; padding: 10px; border: 1px solid #eee; border-radius: 6px; transition: background 0.2s;">
+                                <input type="radio" id="q{{ q.id }}_{{ loop.index }}" name="q_{{ q.id }}" value="{{ opsi }}" required style="width: auto; margin-right: 10px;">
+                                <span>{{ opsi }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if not loop.last %}<hr>{% endif %}
+            {% endfor %}
+            
+            <button type="submit" class="button" style="width: 100%; margin-top: 20px;">
+                <i class="fas fa-paper-plane"></i> Kirim Jawaban
+            </button>
+        </form>
+    </div>
+{% endblock %}

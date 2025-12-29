@@ -1,0 +1,191 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Login Platform{% endblock %}
+
+{% block content %}
+    <div class="auth-left">
+        <h2>IoT LEARN</h2>
+        <p>Platform edukasi IoT terlengkap. Kelola proyek, pantau sensor, dan pelajari teknologi masa depan dalam satu dashboard terintegrasi.</p>
+        
+        <div style="margin-top: 30px;">
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <i class="fas fa-check-circle" style="color: var(--primary-teal); margin-right: 10px;"></i>
+                <span>Real-time Monitoring</span>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <i class="fas fa-check-circle" style="color: var(--primary-teal); margin-right: 10px;"></i>
+                <span>Secure Cloud Storage</span>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-check-circle" style="color: var(--primary-teal); margin-right: 10px;"></i>
+                <span>Community Projects</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-right">
+        <h1>Welcome Back</h1>
+        <p style="color: #888; font-size: 14px; margin-top: -20px; margin-bottom: 30px;">Silakan masuk ke akun Anda</p>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required placeholder="nama@email.com">
+            </div>
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between;">
+                    <label for="password">Password</label>
+                    <a href="#" id="forgot-password-link" style="font-size: 12px; color: var(--primary-teal); text-decoration: none;">Lupa Password?</a>
+                </div>
+                
+                <div style="position: relative;">
+                    <input type="password" id="password" required placeholder="Masukkan password" style="padding-right: 40px;">
+                    <i class="fas fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 13px; cursor: pointer; color: #aaa;"></i>
+                </div>
+            </div>
+            <button type="submit">Sign In</button>
+        </form>
+        
+        <div class="divider">
+            <span>ATAU LANJUTKAN DENGAN</span>
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <button id="login-google" class="social-btn">
+                <i class="fab fa-google" style="color: #DB4437;"></i> Google
+            </button>
+            <button id="login-github" class="social-btn">
+                <i class="fab fa-github" style="color: #333;"></i> GitHub
+            </button>
+        </div>
+
+        <div id="message-container"></div>
+
+        <div class="auth-links">
+            <p>Belum memiliki akun? <a href="{{ url_for('register_form') }}">Daftar Sekarang</a></p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            sendPasswordResetEmail,
+            GoogleAuthProvider,
+            GithubAuthProvider, 
+            signInWithPopup
+        } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+
+        // === KONFIGURASI FIREBASE ANDA (WAJIB DIGANTI!) ===
+        const firebaseConfig = {
+              apiKey: "AIzaSyBZU1dtFTzXxCMJ2X_D7laZWJB3iZ3_zqg",
+              authDomain: "cloud-saya.firebaseapp.com",
+              projectId: "cloud-saya",
+              storageBucket: "cloud-saya.firebasestorage.app",
+              messagingSenderId: "79797695472",
+              appId: "1:79797695472:web:5d843475a747c2583a6335",
+              measurementId: "G-REHCKT126F"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+        const githubProvider = new GithubAuthProvider();
+
+        // --- LOGIKA TOGGLE PASSWORD (MATA) ---
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function (e) {
+            // Ubah tipe input
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            
+            // Ubah ikon mata (garis miring atau tidak)
+            this.classList.toggle('fa-eye-slash');
+        });
+        // --------------------------------------
+
+        const loginForm = document.getElementById('login-form');
+        const messageContainer = document.getElementById('message-container');
+        const forgotPasswordLink = document.getElementById('forgot-password-link'); 
+        const googleBtn = document.getElementById('login-google');
+        const githubBtn = document.getElementById('login-github');
+
+        function showMessage(message, isError = true) {
+            messageContainer.innerHTML = ''; 
+            const msgElement = document.createElement('p');
+            msgElement.textContent = message;
+            msgElement.className = isError ? 'error-message' : 'success-message';
+            messageContainer.appendChild(msgElement);
+        }
+
+        function signInWithProvider(provider) {
+            showMessage("", true); 
+            signInWithPopup(auth, provider)
+                .then((userCredential) => userCredential.user.getIdToken()) 
+                .then(handleToken) 
+                .catch((error) => {
+                    console.error("Error Pop-up Login:", error.message);
+                    showMessage(`Gagal login. Error: ${error.message}`);
+                });
+        }
+        
+        function handleToken(idToken) {
+            return fetch('{{ url_for("session_login") }}', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ idToken: idToken }),
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Gagal menyimpan sesi');
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = '{{ url_for("project_list") }}'; 
+                } else {
+                    throw new Error('Server menolak sesi');
+                }
+            });
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+            const email = document.getElementById('email').value;
+            const passwordVal = document.getElementById('password').value; 
+            showMessage("", true); 
+
+            signInWithEmailAndPassword(auth, email, passwordVal)
+                .then((userCredential) => userCredential.user.getIdToken())
+                .then(handleToken) 
+                .catch((error) => {
+                    console.error("Error login:", error.message);
+                    showMessage("Email atau password salah.");
+                });
+        });
+        
+        googleBtn.addEventListener('click', () => signInWithProvider(googleProvider));
+        githubBtn.addEventListener('click', () => signInWithProvider(githubProvider));
+
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            const email = document.getElementById('email').value; 
+            showMessage("", true); 
+            if (!email) {
+                showMessage("Mohon masukkan email Anda di kotak email, lalu klik 'Lupa Password'.");
+                return;
+            }
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    showMessage("Email reset password telah terkirim! Silakan cek inbox Anda.", false);
+                })
+                .catch((error) => {
+                    console.error("Error reset password:", error.message);
+                    showMessage(error.code === "auth/user-not-found" ? "Email tidak terdaftar." : "Gagal mengirim email reset.");
+                });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Hasil Kuis{% endblock %}
+
+{% block content %}
+    <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+        
+        <div class="form-card" style="padding: 40px; margin-bottom: 30px; border-top: 5px solid {% if nilai >= 70 %}var(--success){% else %}var(--danger){% endif %};">
+            <h2 style="margin: 0; color: #555;">Skor Anda</h2>
+            <div style="font-size: 80px; font-weight: 800; color: {% if nilai >= 70 %}var(--success){% else %}var(--danger){% endif %}; margin: 10px 0;">
+                {{ nilai | int }}
+            </div>
+            
+            <p>
+                {% if nilai == 100 %}
+                    <span style="background: var(--success); color: white; padding: 5px 15px; border-radius: 20px;">Sempurna!</span>
+                {% elif nilai >= 70 %}
+                    <span style="background: var(--accent-teal); color: white; padding: 5px 15px; border-radius: 20px;">Lulus</span>
+                {% else %}
+                    <span style="background: var(--danger); color: white; padding: 5px 15px; border-radius: 20px;">Perlu Belajar Lagi</span>
+                {% endif %}
+            </p>
+
+            <a href="{{ url_for('quiz') }}" class="button button-secondary" style="margin-top: 20px;">
+                <i class="fas fa-redo"></i> Coba Lagi
+            </a>
+        </div>
+
+        <div style="text-align: left;">
+            <h3 style="border-bottom: 2px solid #eee; padding-bottom: 10px;">Detail Jawaban</h3>
+            {% for res in hasil %}
+                <div class="form-card" style="margin-bottom: 15px; padding: 20px; border-left: 5px solid {% if res.is_correct %}var(--success){% else %}var(--danger){% endif %};">
+                    <p style="font-weight: bold; margin-bottom: 5px;">{{ res.pertanyaan }}</p>
+                    
+                    <div style="font-size: 14px;">
+                        Jawaban Anda: 
+                        <span style="color: {% if res.is_correct %}var(--success){% else %}var(--danger){% endif %}; font-weight: bold;">
+                            {{ res.jawaban_user }} 
+                            {% if res.is_correct %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}
+                        </span>
+                    </div>
+
+                    {% if not res.is_correct %}
+                        <div style="font-size: 13px; color: #666; margin-top: 5px;">
+                            Jawaban Benar: <strong>{{ res.jawaban_benar }}</strong>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}

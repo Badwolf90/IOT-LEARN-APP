@@ -1,0 +1,138 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Daftar Akun Baru{% endblock %}
+
+{% block content %}
+    <div class="auth-left">
+        <h2>Bergabung Sekarang</h2>
+        <p>Mulai perjalanan IoT Anda. Akses source code, tutorial, dan simpan proyek favorit Anda di cloud.</p>
+        
+        <div style="margin-top: 30px;">
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <i class="fas fa-rocket" style="color: var(--primary-teal); margin-right: 10px;"></i>
+                <span>Akses Unlimited Proyek</span>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <i class="fas fa-code" style="color: var(--primary-teal); margin-right: 10px;"></i>
+                <span>Download Source Code</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-right">
+        <h1>Buat Akun</h1>
+        <p style="color: #888; font-size: 14px; margin-top: -15px; margin-bottom: 20px;">Lengkapi data diri Anda</p>
+
+        <form id="register-form">
+            <div class="form-group">
+                <label for="nama">Nama Lengkap</label>
+                <input type="text" id="nama" required placeholder="Contoh: Kingg IoT">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required placeholder="nama@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="password" required placeholder="Minimal 6 karakter" style="padding-right: 40px;">
+                    <i class="fas fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 13px; cursor: pointer; color: #aaa;"></i>
+                </div>
+            </div>
+
+            <button type="submit">Daftar Sekarang</button>
+        </form>
+        
+        <div id="message-container"></div>
+
+        <div class="auth-links">
+            <p>Sudah punya akun? <a href="{{ url_for('login_form') }}">Login di sini</a></p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+        // === PASTE CONFIG FIREBASE KAMU DI SINI (SAMA SEPERTI DI LOGIN.HTML) ===
+       const firebaseConfig = {
+           apiKey: "AIzaSyBZU1dtFTzXxCMJ2X_D7laZWJB3iZ3_zqg",
+           authDomain: "cloud-saya.firebaseapp.com",
+           projectId: "cloud-saya",
+           storageBucket: "cloud-saya.firebasestorage.app",
+           messagingSenderId: "79797695472",
+           appId: "1:79797695472:web:5d843475a747c2583a6335",
+           measurementId: "G-REHCKT126F"
+       };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- FITUR SHOW/HIDE PASSWORD ---
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        togglePassword.addEventListener('click', function (e) {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // --- LOGIKA REGISTER ---
+        const regForm = document.getElementById('register-form');
+        const messageContainer = document.getElementById('message-container');
+
+        function showMessage(msg, isError = true) {
+            messageContainer.innerHTML = `<p class="${isError ? 'error-message' : 'success-message'}">${msg}</p>`;
+        }
+
+        regForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nama = document.getElementById('nama').value;
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+
+            showMessage("Sedang memproses...", false);
+
+            try {
+                // 1. BUAT AKUN DI AUTHENTICATION (PENTING!)
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // 2. UPDATE NAMA TAMPILAN
+                await updateProfile(user, { displayName: nama });
+
+                // 3. SIMPAN DATA TAMBAHAN KE FIRESTORE (Database)
+                // Ini supaya fitur Bookmark & Dashboard Profil jalan
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    displayName: nama,
+                    email: email,
+                    createdAt: serverTimestamp(),
+                    role: "member"
+                });
+
+                showMessage("Registrasi Berhasil! Mengalihkan...", false);
+                
+                // 4. Redirect ke Login
+                setTimeout(() => {
+                    window.location.href = "{{ url_for('login_form') }}";
+                }, 1500);
+
+            } catch (error) {
+                console.error("Error Register:", error);
+                if (error.code === 'auth/email-already-in-use') {
+                    showMessage("Email sudah terdaftar. Silakan Login.");
+                } else if (error.code === 'auth/weak-password') {
+                    showMessage("Password terlalu lemah (min. 6 karakter).");
+                } else {
+                    showMessage(`Gagal daftar: ${error.message}`);
+                }
+            }
+        });
+    </script>
+{% endblock %}
